@@ -24,12 +24,13 @@ let persons = [
     }
 ]
 
-app.get('/', (request, response) => {
-  response.send('<h1>Hello World!</h1>')
+app.get('/info', (request, response) => {
+  const time = new Date().toUTCString();
+  response.send(`Phonebook has info for ${persons.length} people <br/> ${time}`)
 })
 
 app.get('/api/persons', (request, response) => {
-  response.json(notes)
+  response.json(persons)
 })
 
 const PORT = 3001
