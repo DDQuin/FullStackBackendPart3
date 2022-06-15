@@ -54,10 +54,32 @@ app.get('/api/persons/:id', (request, response) => {
   })
 
   app.post('/api/persons', (request, response) => {
+    const body = request.body
+    if (!body.name) {
+        return response.status(400).json({ 
+          error: 'name missing' 
+        })
+    }
+
+    if (!body.number) {
+        return response.status(400).json({ 
+          error: 'number missing' 
+        })
+    }
+
+    if (persons.some(person => person.name === body.name)) {
+        return response.status(400).json({ 
+            error: `name ${body.name} already in phonebook` 
+          })
+    }
+
     const randomID = Math.floor(Math.random() * 100000);
-  
-    const person = request.body
-    person.id = randomID
+
+    const person = {
+        "id": randomID,
+        "name": body.name,
+        "number": body.number
+    }
   
     persons = persons.concat(person)
   
