@@ -11,3 +11,6 @@ Content-Type: application/json
     "name": "Posadsg", 
     "number": "231213412"
 }
+
+###
+GET http://localhost:3001/info
