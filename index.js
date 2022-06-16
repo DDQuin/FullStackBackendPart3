@@ -92,23 +92,25 @@ app.get('/api/persons/:id', (request, response) => {
         })
     }
 
+
+
     if (persons.some(person => person.name === body.name)) {
         return response.status(400).json({ 
             error: `name ${body.name} already in phonebook` 
           })
     }
 
-    const randomID = Math.floor(Math.random() * 100000);
+    const person = new Person({
+        name: body.name,
+        number: body.number,
+    })
 
-    const person = {
-        "id": randomID,
-        "name": body.name,
-        "number": body.number
-    }
+    person.save().then(savedPerson => {
+      response.json(savedPerson)
+    })
   
-    persons = persons.concat(person)
   
-    response.json(person)
+   
   })
 
   const PORT = process.env.PORT || 3001
