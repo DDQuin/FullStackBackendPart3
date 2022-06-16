@@ -26,6 +26,19 @@ app.use(morgan(function (tokens, req, res) {
     ].join(' ')
   }))
 
+  const errorHandler = (error, request, response, next) => {
+    console.error(error.message)
+  
+    if (error.name === 'CastError') {
+      return response.status(400).send({ error: 'malformatted id' })
+    } 
+  
+    next(error)
+  }
+  
+  // this has to be the last loaded middleware.
+  app.use(errorHandler)
+
 let persons = [
     { 
       "id": 1,
@@ -76,6 +89,7 @@ app.get('/api/persons/:id', (request, response) => {
     .then(result => {
       response.status(204).end()
     })
+    .catch(error => next(error))
   
   })
 
@@ -109,9 +123,26 @@ app.get('/api/persons/:id', (request, response) => {
     person.save().then(savedPerson => {
       response.json(savedPerson)
     })
+    .catch(error => next(error))
   
   
    
+  })
+
+  
+  app.put('/api/persons/:id', (request, response, next) => {
+    const body = request.body
+  
+    const person = {
+      name: body.name,
+      number: body.number,
+    }
+  
+    Person.findByIdAndUpdate(request.params.id, person, { new: true })
+      .then(updatedPerson => {
+        response.json(updatedPerson)
+      })
+      .catch(error => next(error))
   })
 
   const PORT = process.env.PORT || 3001
